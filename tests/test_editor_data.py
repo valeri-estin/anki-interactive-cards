@@ -29,7 +29,7 @@ class EditorDataTests(unittest.TestCase):
         extras = sentence_fields('sono a casa', None, [], 'tiles', ['il', 'andare'])
         self.assertEqual(from_json_field(extras['Distractors']), ['il', 'andare'])
         validate_note('sentence',{'Prompt':'Ich bin zu Hause',**extras})
-        with self.assertRaisesRegex(ValueError, 'identisch'):
+        with self.assertRaisesRegex(ValueError, 'cannot equal'):
             sentence_fields('sono a casa', None, [], 'tiles', ['casa'])
         with self.assertRaises(ValueError): sentence_fields('sono a casa',['casa','sono','a'])
 

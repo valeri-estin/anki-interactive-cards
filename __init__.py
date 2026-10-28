@@ -13,11 +13,11 @@ from .src.anki_bridge import ensure_types
 from .src.dialogs import InteractiveDialog
 from .src.templates import NOTE_TYPES
 from .src.native_editor import register as register_native_editor
-from .src.localization import language_from_config, text
+from .src.localization import language_from_config, set_language, text
 
 
 def ui_language():
-    return language_from_config(mw.addonManager.getConfig(__package__) or {})
+    return set_language(mw.addonManager.getConfig(__package__) or {})
 
 
 def open_workshop(edit_note=None):

@@ -19,6 +19,7 @@ from .core import from_json_field, clean_text
 from .anki_bridge import media_filename
 from .editor_data import (kind_for_model, fields_from_note_info, choice_fields,
                           sentence_fields, merge_aux_fields, validate_note)
+from .localization import ui_text as t
 
 
 @dataclass
@@ -67,7 +68,7 @@ def _toggle_technical(editor):
     try:
         _reveal_technical[editor] = not bool(_reveal_technical.get(editor, False))
         _refresh_visibility(editor)
-        tooltip('AIC: Technikfelder ' + ('eingeblendet' if _reveal_technical[editor] else 'ausgeblendet'))
+        tooltip(t('editor.technical_shown') if _reveal_technical[editor] else t('editor.technical_hidden'))
     except Exception:
         pass
 
@@ -80,22 +81,22 @@ class AnswerEditor(QDialog):
         self.kind = model_kind
         self.values = values
         self.col = col
-        self.setWindowTitle('AIC · Antworten bearbeiten')
+        self.setWindowTitle(t('editor.title'))
         self.resize(700, 470)
         outer = QVBoxLayout(self)
-        outer.addWidget(QLabel('Frage, Erklärung, Tags, Deck und Medien kannst du weiterhin im Anki-Editor bearbeiten.'))
+        outer.addWidget(QLabel(t('editor.intro')))
         if model_kind in ('choice', 'multi'):
-            outer.addWidget(QLabel('Antworten: Häkchen = richtig. Bei Bildauswahl für jede Option ein Bild wählen.'))
+            outer.addWidget(QLabel(t('editor.choice_intro')))
             self.table = QTableWidget(0, 3)
-            self.table.setHorizontalHeaderLabels(['Antworttext', 'Bilddatei (optional)', 'Richtig'])
+            self.table.setHorizontalHeaderLabels([t('editor.answer_text'), t('editor.image_file'), t('editor.correct')])
             self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
             self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
             self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
             outer.addWidget(self.table, 1)
             row = QHBoxLayout()
-            row.addWidget(self._button('+ Antwort', self._add_blank))
-            row.addWidget(self._button('Antwort entfernen', self._remove))
-            row.addWidget(self._button('Bild auswählen …', self._choose_image))
+            row.addWidget(self._button(t('editor.add_answer'), self._add_blank))
+            row.addWidget(self._button(t('editor.remove_answer'), self._remove))
+            row.addWidget(self._button(t('editor.choose_image'), self._choose_image))
             row.addStretch()
             outer.addLayout(row)
             try:
@@ -111,34 +112,34 @@ class AnswerEditor(QDialog):
             if self.table.rowCount() == 0:
                 for i in range(4): self._add_row('', '', i == 0)
             if model_kind == 'choice':
-                outer.addWidget(QLabel('Einzelauswahl: genau eine richtige Antwort. Für Mehrfachantworten den Notiztyp „AIC · Multiple Choice“ verwenden.'))
+                outer.addWidget(QLabel(t('editor.single_choice')))
         else:
             form = QFormLayout()
             self.answer = QLineEdit(clean_text(values.get('Answer', '')))
             self.answer.setPlaceholderText('z. B. sono a casa')
             self.tokens = QLineEdit(' '.join(from_json_field(values.get('Tokens', ''), [])))
-            self.tokens.setPlaceholderText('Leer lassen = Zielsatz automatisch in Wörter aufteilen')
+            self.tokens.setPlaceholderText(t('editor.auto_tokens'))
             self.alternatives = QTextEdit()
-            self.alternatives.setPlaceholderText('Weitere gültige Sätze, je eine Zeile')
+            self.alternatives.setPlaceholderText(t('editor.alternatives'))
             self.alternatives.setPlainText('\n'.join(from_json_field(values.get('Alternatives', ''), [])))
             self.distractors = QTextEdit()
-            self.distractors.setPlaceholderText('Optionale falsche Wortkacheln, je eine pro Zeile.\nz. B. il\nandare')
+            self.distractors.setPlaceholderText(t('editor.distractors'))
             self.distractors.setMaximumHeight(100)
             self.distractors.setPlainText('\n'.join(from_json_field(values.get('Distractors', ''), [])))
             self.mode = QComboBox()
-            for label, value in [('Wortkacheln und Schreiben', 'both'), ('Nur Wortkacheln','tiles'), ('Nur Schreiben','typing')]:
+            for label, value in [(t('editor.mode_both'), 'both'), (t('editor.mode_tiles'),'tiles'), (t('editor.mode_typing'),'typing')]:
                 self.mode.addItem(label, value)
             idx = self.mode.findData(values.get('Mode','both'))
             self.mode.setCurrentIndex(max(0, idx))
-            form.addRow('Richtiger Zielsatz', self.answer)
-            form.addRow('Wortbausteine', self.tokens)
-            form.addRow('Weitere Lösungen', self.alternatives)
-            form.addRow('Falsche Wortkacheln', self.distractors)
-            form.addRow('Eingabemodus', self.mode)
+            form.addRow(t('editor.target'), self.answer)
+            form.addRow(t('editor.tokens'), self.tokens)
+            form.addRow(t('editor.other_solutions'), self.alternatives)
+            form.addRow(t('editor.wrong_tiles'), self.distractors)
+            form.addRow(t('editor.input_mode'), self.mode)
             outer.addLayout(form)
             outer.addStretch()
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
-        buttons.button(QDialogButtonBox.StandardButton.Ok).setText('Übernehmen')
+        buttons.button(QDialogButtonBox.StandardButton.Ok).setText(t('editor.apply'))
         buttons.accepted.connect(self._validate_then_accept)
         buttons.rejected.connect(self.reject)
         outer.addWidget(buttons)
@@ -166,9 +167,9 @@ class AnswerEditor(QDialog):
     def _choose_image(self):
         idx = self.table.currentRow()
         if idx < 0:
-            QMessageBox.information(self, 'Bild auswählen', 'Bitte zuerst eine Antwortzeile anklicken.')
+            QMessageBox.information(self, t('editor.choose_image'), t('editor.select_row'))
             return
-        filename, _ = QFileDialog.getOpenFileName(self, 'Antwortbild', '', 'Bilder (*.png *.jpg *.jpeg *.webp *.gif *.svg)')
+        filename, _ = QFileDialog.getOpenFileName(self, t('editor.choose_image'), '', t('editor.image_filter'))
         if filename: self.table.item(idx,1).setText(filename)
 
     def _validate_then_accept(self):
@@ -196,7 +197,7 @@ class AnswerEditor(QDialog):
                 self.aux = sentence_fields(answer, tokens, alternatives, self.mode.currentData(), distractors)
             self.accept()
         except Exception as exc:
-            QMessageBox.warning(self, 'Ungültige Antworten', str(exc))
+            QMessageBox.warning(self, t('editor.invalid_answers'), str(exc))
 
 
 def _open_editor(editor):
@@ -222,7 +223,7 @@ def _handle_note_info(editor, info):
         model = mw.col.models.get(info.mid)
         kind = kind_for_model(model)
         if not kind:
-            QMessageBox.information(editor.parentWindow, 'AIC', 'Bitte zuerst einen Notiztyp „AIC · …“ wählen.')
+            QMessageBox.information(editor.parentWindow, 'AIC', t('editor.select_type'))
             return
         values = fields_from_note_info(model, info.fields)
         # Reopening the dialog before clicking Add should preserve the pending draft.
@@ -242,18 +243,14 @@ def _handle_note_info(editor, info):
             if not note['UID']: note['UID'] = merged['UID']
             mw.col.update_note(note)
             editor.reload_note()
-            tooltip('AIC-Antworten in bestehender Notiz gespeichert.')
+            tooltip(t('editor.saved'))
         elif editor.addMode:
             # The actual note is added by Anki's own Add button, not here.
             _pending[editor] = PendingFields(int(info.mid), aux)
-            tooltip('AIC-Antworten vorbereitet. Jetzt auf Ankis „Hinzufügen“ klicken.')
-            QMessageBox.information(editor.parentWindow, 'AIC · Antworten übernommen',
-                'Die Antwortmöglichkeiten sind vorbereitet. Trage bei Bedarf die Frage im Feld „Prompt“ ein '\
-                'und klicke anschließend auf den normalen Anki-Button „Hinzufügen“.\n\n'\
-                'Die JSON-Felder werden beim Hinzufügen automatisch gefüllt.\n'\
-                'Nach dem Hinzufügen für eine weitere Karte erneut „AIC · Antworten bearbeiten“ öffnen.')
+            tooltip(t('editor.prepared'))
+            QMessageBox.information(editor.parentWindow, t('editor.prepared_title'), t('editor.prepared_message'))
         else:
-            QMessageBox.warning(editor.parentWindow, 'AIC', 'Diese ungespeicherte Notiz kann nur im Hinzufügen-Modus bearbeitet werden.')
+            QMessageBox.warning(editor.parentWindow, 'AIC', t('editor.unsaved'))
     except Exception as exc:
         QMessageBox.warning(editor.parentWindow, 'AIC', str(exc))
 
@@ -262,11 +259,10 @@ def register_button(buttons, editor):
     """Make AIC action available in Anki's normal add/edit editor toolbar."""
     _refresh_visibility(editor)
     buttons.append(editor.addButton(icon=None, cmd='aic_edit_answers', func=_open_editor,
-        tip='Antworten / Satzbau ohne JSON bearbeiten', label='AIC · Antworten',
+        tip=t('editor.answers_tip'), label=t('editor.answers_label'),
         id='aic_answers_button'))
     buttons.append(editor.addButton(icon=None, cmd='aic_toggle_technical', func=_toggle_technical,
-        tip='Nur bei AIC: technische Anki-Notizfelder ein- oder ausblenden',
-        label='AIC · Technik', id='aic_technical_button'))
+        tip=t('editor.technical_tip'), label=t('editor.technical_label'), id='aic_technical_button'))
 
 
 def on_will_add(problem, note):
@@ -277,7 +273,7 @@ def on_will_add(problem, note):
     matches = [(ed, entry) for ed,entry in list(_pending.items())
                if entry.mid == int(note.mid) and ed.addMode]
     if len(matches) > 1:
-        return 'Mehrere AIC-Editoren sind offen. Bitte nur einen Hinzufügen-Dialog verwenden.'
+        return t('editor.multiple_add')
     if matches:
         _, entry = matches[0]
         merged = merge_aux_fields({key:note[key] for key in note.keys()}, entry.fields)

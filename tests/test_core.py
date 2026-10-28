@@ -30,9 +30,9 @@ class CoreTests(unittest.TestCase):
     def test_sentence_optional_wrong_tiles(self):
         from src.core import validate_sentence
         validate_sentence('sono a casa', [], ['sono', 'a', 'casa'], ['il', 'andare'])
-        with self.assertRaisesRegex(ValueError, 'identisch'):
+        with self.assertRaisesRegex(ValueError, 'cannot equal'):
             validate_sentence('sono a casa', [], ['sono', 'a', 'casa'], ['casa'])
-        with self.assertRaisesRegex(ValueError, 'doppelt'):
+        with self.assertRaisesRegex(ValueError, 'duplicated'):
             validate_sentence('sono a casa', [], ['sono', 'a', 'casa'], ['il', 'IL'])
         with self.assertRaises(ValueError):
             validate_sentence('sono a casa', [], ['sono', 'a', 'casa'], [' '])

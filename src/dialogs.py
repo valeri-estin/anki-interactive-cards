@@ -16,6 +16,7 @@ from .anki_bridge import (
 )
 from .core import from_json_field, tokenize_sentence, choose_distractors, clean_text
 from .templates import NOTE_TYPES
+from .localization import legacy_text as l
 
 
 def field_names(col, note_type):
@@ -34,7 +35,7 @@ class InteractiveDialog(QDialog):
         super().__init__(parent or mw)
         self.col = mw.col
         self.edit_note = edit_note
-        self.setWindowTitle('Anki Interactive Cards · Kartenwerkstatt')
+        self.setWindowTitle(l('Anki Interactive Cards · Kartenwerkstatt'))
         self.setMinimumSize(850, 710)
         outer = QVBoxLayout(self)
         self.tabs = QTabWidget()
@@ -42,9 +43,9 @@ class InteractiveDialog(QDialog):
         self._make_manual()
         self._make_batch()
         line = QHBoxLayout()
-        line.addWidget(QLabel('Lokale Kartenvorlagen · keine Cloud · kein Eingriff in FSRS'))
+        line.addWidget(QLabel(l('Lokale Kartenvorlagen · keine Cloud · kein Eingriff in FSRS')))
         line.addStretch(1)
-        line.addWidget(button('Schließen', self.close))
+        line.addWidget(button(l('Schließen'), self.close))
         outer.addLayout(line)
         if self.edit_note is not None:
             self._load_note()
@@ -55,7 +56,7 @@ class InteractiveDialog(QDialog):
         for deck in self.col.decks.all_names_and_ids(include_filtered=False):
             cb.addItem(deck.name,deck.id)
         if cb.count() == 0:
-            cb.addItem('Default',1)
+            cb.addItem(l('Default'),1)
         return cb
 
     def _make_manual(self):
@@ -64,12 +65,12 @@ class InteractiveDialog(QDialog):
         self.kind = QComboBox()
         for label, value in [('Einzelauswahl · Text','choice'),('Einzelauswahl · Bilder','image'),
                              ('Mehrfachauswahl · Checkboxen','multi'),('Satzbau','sentence')]:
-            self.kind.addItem(label,value)
+            self.kind.addItem(l(label),value)
         self.deck = self._deck_selector()
         self.prompt = QLineEdit(); self.prompt.setPlaceholderText('z. B. das Haus / Welche Wörter sind Nomen?')
         self.answer = QLineEdit(); self.answer.setPlaceholderText('z. B. sono a casa')
         self.mode = QComboBox()
-        for label,value in [('Wortkacheln und Texteingabe','both'),('Nur Wortkacheln','tiles'),('Nur Texteingabe','typing')]: self.mode.addItem(label,value)
+        for label,value in [('Wortkacheln und Texteingabe','both'),('Nur Wortkacheln','tiles'),('Nur Texteingabe','typing')]: self.mode.addItem(l(label),value)
         self.tokens = QLineEdit(); self.tokens.setPlaceholderText('Leer lassen für automatische Trennung des Zielsatzes')
         self.alternatives = QTextEdit(); self.alternatives.setMaximumHeight(70)
         self.alternatives.setPlaceholderText('Je eine ebenfalls korrekte Schreibweise pro Zeile')
@@ -78,44 +79,38 @@ class InteractiveDialog(QDialog):
         self.explanation = QTextEdit(); self.explanation.setMaximumHeight(65)
         self.image_prompt = QLineEdit(); self.image_prompt.setPlaceholderText('Optional: lokale Bilddatei')
         self.audio = QLineEdit(); self.audio.setPlaceholderText('Optional: [sound:datei.mp3] oder lokale .mp3/.ogg/.wav-Datei')
-        form.addRow('Kartentyp',self.kind)
-        form.addRow('Ziel-Deck',self.deck)
-        form.addRow('Frage / Übersetzung',self.prompt)
-        form.addRow('Zielsatz (Satzbau)',self.answer)
-        form.addRow('Satz-Modus',self.mode)
-        form.addRow('Wortbausteine',self.tokens)
-        form.addRow('Alternative Lösungen',self.alternatives)
-        form.addRow('Falsche Wortkacheln (optional)',self.distractors)
-        form.addRow('Erklärung (optional)',self.explanation)
-        row = QHBoxLayout(); row.addWidget(self.image_prompt,1); row.addWidget(button('Bild wählen …',lambda:self._pick_image(self.image_prompt)))
-        form.addRow('Fragebild',row)
+        form.addRow(l('Kartentyp'),self.kind); form.addRow(l('Ziel-Deck'),self.deck)
+        form.addRow(l('Frage / Übersetzung'),self.prompt); form.addRow(l('Zielsatz (Satzbau)'),self.answer)
+        form.addRow(l('Satz-Modus'),self.mode); form.addRow(l('Wortbausteine'),self.tokens)
+        form.addRow(l('Alternative Lösungen'),self.alternatives); form.addRow(l('Falsche Wortkacheln (optional)'),self.distractors)
+        form.addRow(l('Erklärung (optional)'),self.explanation)
+        row = QHBoxLayout(); row.addWidget(self.image_prompt,1); row.addWidget(button(l('Bild wählen …'),lambda:self._pick_image(self.image_prompt)))
+        form.addRow(l('Fragebild'),row)
         audio_row = QHBoxLayout(); audio_row.addWidget(self.audio,1)
-        audio_row.addWidget(button('Audio wählen …',self._pick_audio))
-        form.addRow('Audio',audio_row)
+        audio_row.addWidget(button(l('Audio wählen …'),self._pick_audio)); form.addRow(l('Audio'),audio_row)
         outer.addLayout(form)
-        self.options_title = QLabel('Antwortmöglichkeiten · pro Zeile eine Möglichkeit, Häkchen = korrekt')
+        self.options_title = QLabel(l('Antwortmöglichkeiten · pro Zeile eine Möglichkeit, Häkchen = korrekt'))
         outer.addWidget(self.options_title)
         self.table = QTableWidget(0,3)
-        self.table.setHorizontalHeaderLabels(['Text / Bildbeschreibung','Bilddatei (optional)','Richtig'])
+        self.table.setHorizontalHeaderLabels([l('Text / Bildbeschreibung'),l('Bilddatei (optional)'),l('Richtig')])
         self.table.horizontalHeader().setSectionResizeMode(0,QHeaderView.ResizeMode.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(1,QHeaderView.ResizeMode.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(2,QHeaderView.ResizeMode.ResizeToContents)
         self.table.setMinimumHeight(170)
         outer.addWidget(self.table,1)
         row = QHBoxLayout()
-        row.addWidget(button('+ Antwort',lambda:self._add_option('', '', False)))
-        row.addWidget(button('– Auswahl entfernen',self._remove_option))
-        row.addWidget(button('Bild für Auswahl …',self._pick_table_image))
-        row.addWidget(button('Vorschläge aus Quellnotizen',self._suggest))
+        row.addWidget(button(l('+ Antwort'),lambda:self._add_option('', '', False)))
+        row.addWidget(button(l('– Auswahl entfernen'),self._remove_option)); row.addWidget(button(l('Bild für Auswahl …'),self._pick_table_image))
+        row.addWidget(button(l('Vorschläge aus Quellnotizen'),self._suggest))
         row.addStretch(1); outer.addLayout(row)
         outer.addWidget(QLabel('Hinweis: Die Reihenfolge wird während des Lernens zufällig gemischt. Einzelauswahl benötigt exakt ein Häkchen.'))
         row = QHBoxLayout(); row.addStretch(1)
-        row.addWidget(button('Änderungen speichern' if self.edit_note else 'Karte erstellen',self._save))
+        row.addWidget(button(l('Änderungen speichern') if self.edit_note else l('Karte erstellen'),self._save))
         outer.addLayout(row)
         self.kind.currentIndexChanged.connect(self._refresh_mode)
         for i in range(4):self._add_option('', '', i == 0)
         self._refresh_mode()
-        self.tabs.addTab(tab,'Karte erstellen / bearbeiten')
+        self.tabs.addTab(tab,l('Karte erstellen / bearbeiten'))
 
     def _add_option(self, label='', image='', correct=False):
         row = self.table.rowCount(); self.table.insertRow(row)
@@ -131,13 +126,11 @@ class InteractiveDialog(QDialog):
         if r>=0: self.table.removeRow(r)
 
     def _pick_image(self,target):
-        filename,_ = QFileDialog.getOpenFileName(self,'Bild auswählen','',
-                                                  'Bilder (*.png *.jpg *.jpeg *.gif *.webp *.svg)')
+        filename,_ = QFileDialog.getOpenFileName(self,l('Bild auswählen'),'', l('Bilder (*.png *.jpg *.jpeg *.gif *.webp *.svg)'))
         if filename: target.setText(filename)
 
     def _pick_audio(self):
-        filename,_ = QFileDialog.getOpenFileName(self,'Audio auswählen','',
-                                                  'Audio (*.mp3 *.ogg *.wav *.m4a *.flac)')
+        filename,_ = QFileDialog.getOpenFileName(self,l('Audio auswählen'),'', l('Audio (*.mp3 *.ogg *.wav *.m4a *.flac)'))
         if filename:self.audio.setText(filename)
 
     def _audio_value(self):
@@ -146,17 +139,16 @@ class InteractiveDialog(QDialog):
         path=Path(text).expanduser()
         if path.is_file():
             if path.suffix.lower() not in ('.mp3','.ogg','.wav','.m4a','.flac'):
-                raise ValueError('Nicht unterstütztes Audioformat.')
+                raise ValueError(l('Nicht unterstütztes Audioformat.'))
             return '[sound:%s]' % self.col.media.add_file(str(path))
         return text
 
     def _pick_table_image(self):
         r = self.table.currentRow()
         if r<0:
-            QMessageBox.information(self,'Bildauswahl','Bitte zuerst eine Antwortzeile markieren.')
+            QMessageBox.information(self,l('Bildauswahl'),l('Bitte zuerst eine Antwortzeile markieren.'))
             return
-        filename,_ = QFileDialog.getOpenFileName(self,'Antwortbild auswählen','',
-                                                  'Bilder (*.png *.jpg *.jpeg *.gif *.webp *.svg)')
+        filename,_ = QFileDialog.getOpenFileName(self,l('Antwortbild auswählen'),'', l('Bilder (*.png *.jpg *.jpeg *.gif *.webp *.svg)'))
         if filename: self.table.item(r,1).setText(filename)
 
     def _refresh_mode(self):
@@ -166,9 +158,8 @@ class InteractiveDialog(QDialog):
         self.tokens.setEnabled(is_sentence); self.alternatives.setEnabled(is_sentence); self.distractors.setEnabled(is_sentence)
         self.table.setEnabled(not is_sentence)
         self.table.setColumnHidden(1,not is_image)
-        self.options_title.setText('Antwortmöglichkeiten – mehrere Häkchen erlaubt' if self.kind.currentData()=='multi'
-                                   else 'Bildoptionen – pro Antwort ein Bild' if is_image
-                                   else 'Antwortmöglichkeiten – genau ein Häkchen')
+        self.options_title.setText(l('Antwortmöglichkeiten – mehrere Häkchen erlaubt') if self.kind.currentData()=='multi'
+                                   else l('Bildoptionen – pro Antwort ein Bild') if is_image else l('Antwortmöglichkeiten – genau ein Häkchen'))
 
     def _options(self):
         opts=[]; correct=[]
@@ -181,7 +172,7 @@ class InteractiveDialog(QDialog):
             opts.append({'text':label,'image':media_filename(self.col,img) if img else ''})
             if is_correct: correct.append(len(opts)-1)
         if self.kind.currentData() == 'image' and any(not o['image'] for o in opts):
-            raise ValueError('Für jede Bildantwort muss eine Bilddatei hinterlegt sein.')
+            raise ValueError(l('Für jede Bildantwort muss eine Bilddatei hinterlegt sein.'))
         return opts,correct
 
     def _save(self):
@@ -205,22 +196,22 @@ class InteractiveDialog(QDialog):
             if self.edit_note is not None:
                 payload['Source ID']=self.edit_note['Source ID']
                 add_card(self.col,note_kind,self.deck.currentData(),payload,self.edit_note)
-                tooltip('Interaktive Karte aktualisiert.')
+                tooltip(l('Interaktive Karte aktualisiert.'))
                 self.close()
             else:
                 add_card(self.col,note_kind,self.deck.currentData(),payload)
-                tooltip('Interaktive Karte erstellt.')
+                tooltip(l('Interaktive Karte erstellt.'))
                 self.prompt.clear(); self.answer.clear(); self.tokens.clear()
                 self.alternatives.clear(); self.distractors.clear(); self.explanation.clear(); self.image_prompt.clear(); self.audio.clear()
                 self.table.setRowCount(0)
                 for i in range(4):self._add_option('', '', i==0)
         except Exception as exc:
-            QMessageBox.warning(self,'Karte nicht gespeichert',str(exc))
+            QMessageBox.warning(self,l('Karte nicht gespeichert'),str(exc))
 
     def _load_note(self):
         note=self.edit_note; name=note.note_type()['name']
         kind = next((k for k,v in NOTE_TYPES.items() if v['name']==name),None)
-        if kind is None:raise ValueError('Kein unterstützter interaktiver Notiztyp.')
+        if kind is None:raise ValueError(l('Kein unterstützter interaktiver Notiztyp.'))
         opts=from_json_field(note['Options'],[]) if kind!='sentence' else []
         if kind=='choice' and any(x.get('image') for x in opts):
             idx=self.kind.findData('image')
@@ -255,34 +246,29 @@ class InteractiveDialog(QDialog):
         self.source_image_field=QComboBox();self.source_audio_field=QComboBox()
         self.batch_type=QComboBox()
         for label,kind in [('Text-Einzelauswahl','choice'),('Bild-Einzelauswahl','image'),
-                           ('Satzbau mit Schreiben & Wortkacheln','sentence')]:
-            self.batch_type.addItem(label,kind)
+                           ('Satzbau mit Schreiben & Wortkacheln','sentence')]: self.batch_type.addItem(l(label),kind)
         self.num_distractors=QSpinBox();self.num_distractors.setRange(1,10);self.num_distractors.setValue(3)
-        self.batch_update=QCheckBox('Bereits erzeugte Karten aktualisieren (Lernfortschritt bleibt erhalten)')
-        form.addRow('Quell-Notiztyp',self.source_type)
-        form.addRow('Quell-Deck',self.source_deck)
-        form.addRow('Frage-Feld',self.front_field)
-        form.addRow('Antwort-Feld',self.back_field)
-        form.addRow('Bildfeld (Bild der Antwort)',self.source_image_field)
-        form.addRow('Audiofeld (optional)',self.source_audio_field)
-        form.addRow('Ziel-Deck',self.target_deck)
-        form.addRow('Erzeugter Kartentyp',self.batch_type)
-        form.addRow('Falsche Antwortoptionen',self.num_distractors)
+        self.batch_update=QCheckBox(l('Bereits erzeugte Karten aktualisieren (Lernfortschritt bleibt erhalten)'))
+        form.addRow(l('Quell-Notiztyp'),self.source_type); form.addRow(l('Quell-Deck'),self.source_deck)
+        form.addRow(l('Frage-Feld'),self.front_field); form.addRow(l('Antwort-Feld'),self.back_field)
+        form.addRow(l('Bildfeld (Bild der Antwort)'),self.source_image_field); form.addRow(l('Audiofeld (optional)'),self.source_audio_field)
+        form.addRow(l('Ziel-Deck'),self.target_deck); form.addRow(l('Erzeugter Kartentyp'),self.batch_type)
+        form.addRow(l('Falsche Antwortoptionen'),self.num_distractors)
         form.addRow('',self.batch_update)
         outer.addLayout(form)
         self.source_type.currentIndexChanged.connect(self._source_type_change)
         self._source_type_change()
         self.preview=QTextEdit(); self.preview.setReadOnly(True)
-        self.preview.setPlaceholderText('Vorschau der Quellnotizen …')
+        self.preview.setPlaceholderText(l('Vorschau der Quellnotizen …'))
         outer.addWidget(self.preview,1)
         row=QHBoxLayout()
-        row.addWidget(button('Quelle prüfen',self._preview_source))
+        row.addWidget(button(l('Quelle prüfen'),self._preview_source))
         row.addStretch(1)
-        row.addWidget(button('Karten erzeugen',self._generate))
+        row.addWidget(button(l('Karten erzeugen'),self._generate))
         outer.addLayout(row)
         outer.addWidget(QLabel('Hinweis: Bildzuordnung benötigt je Quellnotiz ein Bild zur Antwort.\n'
                                'Texte werden als Momentaufnahme übernommen. Zur Aktualisierung erneut importieren.'))
-        self.tabs.addTab(tab,'Aus bestehenden Vokabeln erzeugen')
+        self.tabs.addTab(tab,l('Aus bestehenden Vokabeln erzeugen'))
 
     def _source_type_change(self):
         fields=field_names(self.col,self.source_type.currentData())

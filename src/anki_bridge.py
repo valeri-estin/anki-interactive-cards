@@ -6,6 +6,7 @@ import uuid
 from pathlib import Path
 from .core import as_json_field, from_json_field, validate_choices, validate_sentence, tokenize_sentence, detect_media, choose_distractors, clean_text
 from .templates import NOTE_TYPES, CSS, make_template
+from .localization import legacy_text as l
 
 
 ADVANCED_FIELDS = {'Options', 'Correct', 'Media References', 'Answer', 'Tokens', 'Alternatives', 'Mode', 'Distractors', 'UID', 'Source ID'}
@@ -72,7 +73,7 @@ def media_filename(col, path_or_name: str) -> str:
     p = Path(raw).expanduser()
     if p.exists() and p.is_file():
         if p.suffix.lower() not in ('.jpg','.jpeg','.png','.gif','.webp','.svg'):
-            raise ValueError('Nicht unterstütztes Bildformat: ' + p.suffix)
+            raise ValueError(l('Nicht unterstütztes Bildformat: ') + p.suffix)
         return col.media.add_file(str(p))
     if '/' in raw or '\\' in raw or '..' in raw:
         raise ValueError('Bild nicht gefunden: ' + raw)
@@ -103,7 +104,7 @@ def new_payload(kind, prompt, *, options=None, correct=None, answer='', tokens=N
         tokens = tokens if tokens is not None else tokenize_sentence(answer)
         validate_sentence(answer,alternatives or [],tokens,distractors or [])
         if mode not in ('tiles','typing','both'):
-            raise ValueError('Ungültiger Satzmodus.')
+            raise ValueError(l('Ungültiger Satzmodus.'))
         fields.update({'Answer':html.escape(answer.strip()),'Tokens':as_json_field(tokens),
                        'Alternatives':as_json_field(alternatives or []),'Mode':mode,
                        'Distractors':as_json_field(distractors or [])})
@@ -180,11 +181,11 @@ def generate_from_rows(col, rows, kind, target_deck, distractors=3, update_exist
     rows provide labels/images for distractors. No scheduling state modified.
     """
     if kind not in ('choice','image','sentence'):
-        raise ValueError('Nicht unterstützter Importmodus.')
+        raise ValueError(l('Nicht unterstützter Importmodus.'))
     if not 1 <= distractors <= 10:
         raise ValueError('1–10 falsche Antworten sind erlaubt.')
     if kind == 'image' and sum(bool(r['image']) for r in rows) < 2:
-        raise ValueError('Bildauswahl benötigt mindestens zwei Quellnotizen mit Bildern.')
+        raise ValueError(l('Bildauswahl benötigt mindestens zwei Quellnotizen mit Bildern.'))
     image_by_answer = {r['answer']:r['image'] for r in rows if r.get('image')}
     imported = updated = skipped = 0
     target_id = col.decks.id(target_deck)

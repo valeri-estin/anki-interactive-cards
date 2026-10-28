@@ -67,11 +67,11 @@ class InteractiveDialog(QDialog):
                              ('Mehrfachauswahl · Checkboxen','multi'),('Satzbau','sentence')]:
             self.kind.addItem(l(label),value)
         self.deck = self._deck_selector()
-        self.prompt = QLineEdit(); self.prompt.setPlaceholderText('z. B. das Haus / Welche Wörter sind Nomen?')
+        self.prompt = QLineEdit(); self.prompt.setPlaceholderText('e.g. das Haus / Which words are nouns?')
         self.answer = QLineEdit(); self.answer.setPlaceholderText('z. B. sono a casa')
         self.mode = QComboBox()
         for label,value in [('Wortkacheln und Texteingabe','both'),('Nur Wortkacheln','tiles'),('Nur Texteingabe','typing')]: self.mode.addItem(l(label),value)
-        self.tokens = QLineEdit(); self.tokens.setPlaceholderText('Leer lassen für automatische Trennung des Zielsatzes')
+        self.tokens = QLineEdit(); self.tokens.setPlaceholderText('Leave empty to split the target sentence automatically')
         self.alternatives = QTextEdit(); self.alternatives.setMaximumHeight(70)
         self.alternatives.setPlaceholderText('Je eine ebenfalls korrekte Schreibweise pro Zeile')
         self.distractors = QTextEdit(); self.distractors.setMaximumHeight(80)
@@ -103,7 +103,7 @@ class InteractiveDialog(QDialog):
         row.addWidget(button(l('– Auswahl entfernen'),self._remove_option)); row.addWidget(button(l('Bild für Auswahl …'),self._pick_table_image))
         row.addWidget(button(l('Vorschläge aus Quellnotizen'),self._suggest))
         row.addStretch(1); outer.addLayout(row)
-        outer.addWidget(QLabel('Hinweis: Die Reihenfolge wird während des Lernens zufällig gemischt. Einzelauswahl benötigt exakt ein Häkchen.'))
+        outer.addWidget(QLabel(l('Hinweis: Die Reihenfolge wird während des Lernens zufällig gemischt. Einzelauswahl benötigt exakt ein Häkchen.')))
         row = QHBoxLayout(); row.addStretch(1)
         row.addWidget(button(l('Änderungen speichern') if self.edit_note else l('Karte erstellen'),self._save))
         outer.addLayout(row)
@@ -235,7 +235,7 @@ class InteractiveDialog(QDialog):
 
     def _make_batch(self):
         tab=QWidget();outer=QVBoxLayout(tab)
-        outer.addWidget(QLabel('Erzeuge interaktive Karten aus bestehenden Anki-Vokabelnotizen. Quellnotizen bleiben unverändert.'))
+        outer.addWidget(QLabel(l('Erzeuge interaktive Karten aus bestehenden Anki-Vokabelnotizen. Quellnotizen bleiben unverändert.')))
         form=QFormLayout()
         self.source_type=QComboBox()
         for n in self.col.models.all_names_and_ids():
@@ -266,8 +266,7 @@ class InteractiveDialog(QDialog):
         row.addStretch(1)
         row.addWidget(button(l('Karten erzeugen'),self._generate))
         outer.addLayout(row)
-        outer.addWidget(QLabel('Hinweis: Bildzuordnung benötigt je Quellnotiz ein Bild zur Antwort.\n'
-                               'Texte werden als Momentaufnahme übernommen. Zur Aktualisierung erneut importieren.'))
+        outer.addWidget(QLabel(l('Hinweis: Bildzuordnung benötigt je Quellnotiz ein Bild zur Antwort.\nTexte werden als Momentaufnahme übernommen. Zur Aktualisierung erneut importieren.')))
         self.tabs.addTab(tab,l('Aus bestehenden Vokabeln erzeugen'))
 
     def _source_type_change(self):
@@ -300,7 +299,7 @@ class InteractiveDialog(QDialog):
     def _suggest(self):
         try:
             rows=self._rows()
-            if not rows:raise ValueError('Keine passenden Notizen gefunden. Bitte Quelltyp und Felder prüfen.')
+            if not rows:raise ValueError(l('Keine passenden Notizen gefunden. Bitte Quelltyp und Felder prüfen.'))
             # First correct checked item, if present; otherwise use first filled item.
             correct = next((self.table.item(i,0).text().strip() for i in range(self.table.rowCount())
                              if self.table.item(i,2).checkState()==Qt.CheckState.Checked and self.table.item(i,0).text().strip()),'')
@@ -309,12 +308,12 @@ class InteractiveDialog(QDialog):
             proposed=choose_distractors(correct,[r['answer'] for r in rows],3)
             for word in proposed:self._add_option(word,'',False)
             tooltip(f'{len(proposed)} Antwortvorschläge ergänzt. Bitte fachlich prüfen.')
-        except Exception as exc:QMessageBox.warning(self,'Vorschläge',str(exc))
+        except Exception as exc:QMessageBox.warning(self,l('Vorschläge'),str(exc))
 
     def _generate(self):
         try:
             rows=self._rows()
-            if not rows:raise ValueError('Keine gültigen Quellnotizen vorhanden.')
+            if not rows:raise ValueError(l('Keine gültigen Quellnotizen vorhanden.'))
             result = QMessageBox.question(self,'Stapel erstellen',
                 f'{len(rows)} Quellnotizen prüfen und interaktive Karten im Deck "{self.target_deck.currentText()}" erzeugen?\n'
                 'Dies erstellt zusätzliche Karten; bestehende Quellnotizen bleiben bestehen.')

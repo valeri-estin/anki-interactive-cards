@@ -9,9 +9,9 @@
 5. Run **Interactive Cards · Vorlagen aktualisieren** only on a disposable or
    backed-up collection, because it deliberately replaces existing templates.
 
-The release archive includes the project's AGPL-3.0-or-later `LICENSE` file.
-Keep it in every release and link the public source repository from the AnkiWeb
-support page once it is available.
+The release archive includes the project's complete AGPL-3.0-or-later
+`LICENSE` file. Keep the complete license text in every release and link the
+public source repository from the AnkiWeb support page once it is available.
 
 ## AIC Foundation package
 

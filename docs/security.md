@@ -1,4 +1,30 @@
-# Security review: AIC Foundation package
+# Security review
+
+## Add-on scope
+
+The add-on runs locally inside Anki Desktop. It has no accounts, network
+service, telemetry, secret configuration, or runtime third-party dependency.
+The relevant trust boundaries are imported card data, local media files, Anki's
+collection/media APIs, and the HTML/JavaScript card templates.
+
+- **A05 injection:** Card prompt/explanation values are HTML-escaped before
+  field serialization. The browser templates create visible content with
+  `textContent`, and media filenames reject URL schemes and path traversal.
+- **A06 insecure design:** AIC never changes FSRS, Anki scheduling, ratings, or
+  source notes during card generation. It bounds a generation run to 5,000
+  source notes.
+- **A08 integrity:** The archive builder whitelists runtime files and validates
+  its root layout. User template backups are kept under Anki's preserved
+  `user_files/` directory.
+- **A10 exceptional conditions:** Invalid answer payloads, unsupported media,
+  missing fields, and duplicate generation sources fail before an AIC note is
+  written.
+
+Anki card templates can execute JavaScript. This is an inherent Anki deck trust
+boundary: users and deck-generation agents must import only trusted deck
+sources. The AIC source does not fetch external scripts or media.
+
+## Foundation package scope
 
 ## Scope
 

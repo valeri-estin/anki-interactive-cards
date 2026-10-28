@@ -1,225 +1,144 @@
 # Anki Interactive Cards
 
 **Version:** 1.2.0
-**Plattform:** Anki Desktop (Python-Add-on, Qt6) zum Erstellen; HTML/JavaScript-Karten zum Lernen  
-**Sprache der Oberfläche:** Deutsch  
-**Lizenz:** AGPL-3.0-or-later
+**Platform:** Anki Desktop (Python/Qt 6 add-on for authoring; HTML and JavaScript cards for review)
+**Interface language:** German
+**License:** AGPL-3.0-or-later
 
-Ein Add-on für interaktive Anki-Karten. Die Lernkarten verwenden **Ankis normalen Scheduler einschließlich FSRS**. Es werden keine Bewertungen automatisiert, kein Lernfortschritt umgeschrieben und keine Netzwerkdienste aufgerufen.
+Anki Interactive Cards (AIC) adds interactive note types to Anki. It uses
+Anki's normal scheduler, including FSRS: it never assigns ratings, rewrites
+learning progress, or calls a network service. Learners still choose Anki's
+native **Again**, **Hard**, **Good**, or **Easy** rating.
 
-## Änderungen in Version 1.2.0
+## Requirements and installation
 
-### Aufgeräumter normaler Anki-Editor
+No Python, Node.js, or system packages are required beyond a compatible Anki
+Desktop installation. AIC uses only Anki's bundled Python/Qt runtime and the
+HTML/JavaScript embedded in its card templates.
 
-Wenn du in **Hinzufügen** oder **Bearbeiten** einen AIC-Notiztyp wählst, sind nur
-**Prompt, Explanation, Prompt Image und Audio** sichtbar. Die Datenfelder
-(Options, Correct, Media References, Answer, Tokens, Alternatives, Mode,
-Distractors, UID und Source ID) bleiben **erhalten und gespeichert**, werden
-aber in der regulären Eingabemaske ausgeblendet. Die Antwortdaten werden über
-**AIC · Antworten** konfiguriert. Über **AIC · Technik** kannst du die
-versteckten Felder temporär einblenden und wieder ausblenden.
+1. Back up the collection and close Anki.
+2. Download `anki-interactive-cards-1.2.0.ankiaddon`.
+3. In Anki Desktop, choose **Tools → Add-ons → Install from file…** (the label
+   varies with Anki's interface language), select the archive, and restart
+   Anki.
+4. On a first installation, open **Tools → Interactive Cards · Card Workshop**
+   once to create the note types.
+5. In **Add**, select `AIC · Single Choice`, `AIC · Multiple Choice`, or
+   `AIC · Sentence Builder`. Click **AIC · Answers** in Anki's formatting bar,
+   define the answers, click **Apply**, then use Anki's normal **Add** button.
 
-Dies ist eine *Darstellungsfunktion*, keine Datenmigration: Die Notizfelder
-werden nicht gelöscht. Zusätzlich werden sie in Ankis Felddefinition als
-**Collapse by default** markiert. Sollte eine zukünftige Anki-Version die
-Editor-DOM-Struktur ändern, bleiben die Felder ggf. zunächst nur eingeklappt;
-die Kartenfunktion ist davon unabhängig.
+The answer dialog does not create a card by itself. It validates and prepares
+the AIC fields; Anki creates or saves the note. When editing one existing AIC
+note in Anki's browser, applying the dialog writes the updated AIC fields to
+that note. If the toolbar button is missing, confirm that the add-on is enabled
+and restart Anki.
 
-### Satzbau mit falschen Wortkacheln (fünfte Übungsvariante)
+For an update from 1.1.0, create a backup first. Existing note data is
+preserved; `Distractors` is added as needed. To apply the new sentence-builder
+templates to existing note types, choose **Tools → Interactive Cards · Update
+templates**. This deliberately replaces the affected HTML/CSS templates, after
+creating a JSON backup in `user_files/template_backups/`; it does not change
+field content or scheduling data. Reopen Add after an update so Anki reloads
+the editor view.
 
-1. Notiztyp **AIC · Sentence Builder** auswählen.
-2. In **Prompt** die deutsche Satzvorgabe eingeben: `Ich bin zu Hause.`
-3. **AIC · Antworten** öffnen.
-4. Als Zielsatz `sono a casa` eintragen, Wortbausteine leer lassen.
-5. In **Falsche Wortkacheln** untereinander `il` und `andare` eintragen.
-6. **Wortkacheln und Schreiben** oder **Nur Wortkacheln** wählen, **Übernehmen**, danach normal **Hinzufügen**.
+## Included card types
 
-Die Karte mischt `sono`, `a`, `casa`, `il`, `andare`. Die Lernenden müssen die
-richtigen Wörter auswählen und in die korrekte Reihenfolge bringen. Nicht alle
-Kacheln müssen benutzt werden. Im optionalen Schreiben-Modus erscheinen keine
-Wortkacheln. **Eine falsche Kachel darf nicht den gleichen Text wie eine
-benötigte richtige Kachel haben**, da sie sonst nicht unterscheidbar wäre.
-Bei bestehenden Satzbaukarten sind keine falschen Kacheln hinterlegt; sie
-funktionieren weiterhin wie bisher.
-
-### Update von 1.1.0
-
-1. Vor der Installation ein Anki-Backup anlegen.
-2. `anki-interactive-cards-1.2.0.ankiaddon` über **Extras → Erweiterungen → Aus Datei installieren** installieren und Anki neu starten.
-3. Die Feldmigration erfolgt beim Öffnen des Profils automatisch und erhält
-   bestehende Notizen. `Distractors` wird bei Bedarf als neues Feld ergänzt.
-4. **Extras → Interactive Cards · Vorlagen aktualisieren** aufrufen und
-   bestätigen, damit **bereits bestehende AIC-Satzbaukarten** die zusätzlichen
-   Wortkacheln anzeigen können. Das Add-on sichert zuvor die Vorlagen. Eigene
-   Anpassungen an diesen Vorlagen werden beim Aktualisieren überschrieben.
-5. Hinzufügen-Fenster schließen und neu öffnen, damit die Editoransicht mit
-   den ausgeblendeten Feldern geladen wird.
-
-**Verification status:** Automated checks cover the supported data and browser
-paths. The add-on has also been exercised in Anki Desktop; run the update once
-in a backed-up test profile after upgrading Anki or combining it with editor
-add-ons that modify the same interface.
-
-## Installation
-
-Für die Nutzung sind neben einer kompatiblen Anki-Desktop-Installation keine
-zusätzlichen Python-, Node- oder Systempakete erforderlich. Das Add-on verwendet
-nur Ankis mitgelieferte Python-/Qt-Laufzeit und die Browserlogik in den
-Kartenvorlagen.
-
-1. Anki Desktop schließen bzw. vor der Installation ein Backup deiner Sammlung erstellen.
-2. Die Datei `anki-interactive-cards-1.2.0.ankiaddon` herunterladen.
-3. Anki → **Extras → Erweiterungen → Aus Datei installieren** (Bezeichnung kann je nach Sprache/Version variieren).
-4. Die `.ankiaddon`-Datei auswählen und Anki **neu starten**.
-5. Beim ersten Installieren zunächst **Extras → Interactive Cards · Kartenwerkstatt** einmal öffnen, damit die drei Notiztypen angelegt werden. Danach **Anki → Hinzufügen** öffnen und als Typ `AIC · Single Choice`, `AIC · Multiple Choice` oder `AIC · Sentence Builder` auswählen. Im normalen Editor auf **AIC · Antworten** klicken. Die separate **Kartenwerkstatt** unter Extras bleibt als Alternative verfügbar.
-
-Die `.ankiaddon`-Datei enthält eine `manifest.json`. Bei einem Upgrade von 1.0.0 auf 1.2.0 bleiben die vorhandenen Notiztypen und Karten erhalten. Die neuen Editor-Schaltflächen funktionieren nach einem Anki-Neustart. Für den **neutralen Look bereits bestehender AIC-Notiztypen** unter **Extras → Interactive Cards · Vorlagen aktualisieren** wählen. Dabei werden die bisherigen Kartenvorlagen und deren CSS überschrieben; eine JSON-Sicherung wird zuvor unter `user_files/template_backups/` angelegt. Bestehende Feldinhalte und Wiederholungsdaten bleiben unberührt.
-
-## Enthaltene Kartentypen
-
-| Typ | Beispiel | Interaktion |
+| Type | Example | Interaction |
 | --- | --- | --- |
-| Single Choice / Text | `das Haus` → la casa / il libro / … | Eine Antwort per Klick, sofortiges Feedback |
-| Single Choice / Bilder | `la casa` → vier Bilder | Bilder wählen; Medien lokal gespeichert |
-| Multiple Choice | „Welche Begriffe sind Nomen?“ | Beliebig viele Häkchen, Gesamtprüfung |
-| Sentence Builder | `Ich bin zu Hause` → `sono a casa` | Wortkacheln, Texteingabe oder Wahlmöglichkeit |
+| Single Choice / text | `das Haus` → `la casa` / `il libro` / … | Select one answer and receive immediate feedback. |
+| Single Choice / images | `la casa` → four images | Select a locally stored image. |
+| Multiple Choice | “Which terms are nouns?” | Select any number of answers and submit the complete set. |
+| Sentence Builder | `Ich bin zu Hause` → `sono a casa` | Arrange word tiles, type an answer, or use both modes. |
 
-Alle Auswahlantworten werden beim Anzeigen zufällig gemischt. Für Sätze werden Wortbausteine gemischt. Wortkacheln können durch Antippen zurückgenommen werden. Satz-Alternativen werden berücksichtigt; Groß-/Kleinschreibung und Satzendzeichen (`.`, `!`, `?`) werden ignoriert, **Akzente und Schreibweisen bleiben relevant**.
+Answer choices and sentence tokens are shuffled when a card is shown. Sentence
+alternatives are supported. Case and terminal `.`, `!`, and `?` are ignored;
+accents and spelling remain significant.
 
-## Standard-Anki-Editor (empfohlen ab 1.1)
+### Sentence Builder distractors
 
-1. Öffne **Hinzufügen** in Anki und wähle oben links `AIC · Single Choice`, `AIC · Multiple Choice` oder `AIC · Sentence Builder` sowie dein gewünschtes Deck.
-2. Trage die **Frage in Prompt** ein; `Explanation`, `Prompt Image` und `Audio` sind optional. Du kannst wie gewohnt Tags hinzufügen.
-3. Klicke oben in der Anki-Formatleiste auf **AIC · Antworten**. Wenn der Button fehlt, prüfe, ob das Add-on aktiv ist und starte Anki neu.
-4. Für **Single/Multiple Choice**: Text und optional Bild pro Antwort eingeben, die korrekten Antworten mit Häkchen markieren (Single Choice = genau 1). Über **Bild auswählen …** wählst du die lokale Bilddatei für die gerade markierte Antwortzeile. Für **Sentence Builder**: Zielsatz, optional die Wortbausteine und alternative Lösungen sowie den Eingabemodus definieren.
-5. **Übernehmen** klicken. Danach zum normalen Anki-Fenster zurückkehren und dort **Hinzufügen** klicken. **Das Popup speichert neue Karten nicht selbst.** Die Antworten werden von Anki beim Hinzufügen in die Notizfelder übertragen.
+Use `AIC · Sentence Builder`, enter the prompt, open **AIC · Answers**, then
+enter the target sentence. Add one wrong word tile per line under **Wrong word
+tiles** and select **Word tiles and typing** or **Word tiles only**. The tiles
+are shuffled; learners need not use every tile. A distractor must not have the
+same text as a required correct token, otherwise the card cannot distinguish
+them. Existing sentence-builder notes without distractors continue to work.
 
-Bei bereits **gespeicherten** AIC-Notizen im Anki-Browser wird das Popup über denselben Button geöffnet; dann werden die Antwortfelder beim Übernehmen sofort in der bestehenden Notiz gespeichert.
+## Authoring notes
 
-**Hinweis für den Standardeditor:** Die technischen Felder `Options`, `Correct`, `Tokens`, `Alternatives`, `Distractors` und weitere werden standardmäßig **eingeklappt**, nicht gelöscht/versteckt. Öffne sie nur für technische Diagnose oder wenn du sie bewusst von Hand editieren willst. Die Feld-Einklappung kann Anki jederzeit per Pfeilsymbol geändert werden.
+The ordinary editor keeps **Prompt**, **Explanation**, **Prompt Image**, and
+**Audio** visible. Technical fields such as `Options`, `Correct`, `Media
+References`, `Answer`, `Tokens`, `Alternatives`, `Mode`, `Distractors`, `UID`,
+and `Source ID` remain stored but are collapsed by default. Use **AIC ·
+Technical** only for diagnosis or intentional low-level editing.
 
-**Fehlervermeidung:** Wenn kein gültiger Antwortsatz hinterlegt ist, lehnt das Add-on das Hinzufügen einer AIC-Notiz mit einer Fehlermeldung ab. Du kannst die Antworten danach über **AIC · Antworten** korrigieren. Wenn ein neues Anki-Formular angelegt wird, müssen die Antwortoptionen erneut eingegeben werden; sie werden nicht auf die nächste Karte übertragen. Es werden ausschließlich AIC-Notizen validiert.
+The separate **Card Workshop** is an alternative authoring UI. It can create a
+card manually or generate selection cards from existing vocabulary notes. For a
+generation run, select the source note type, source deck, question and answer
+fields, optional image/audio fields, target deck, card type, and number of
+distractors. The source notes are never changed. Generated cards have a source
+ID; a later run skips them by default or can update their content without
+resetting scheduling. A run is limited to 5,000 source notes. Review suggested
+distractors, because the simple text-length/word-count heuristic does not prove
+semantic suitability.
 
-## Eine Karte manuell erstellen
+Images selected in AIC are copied into Anki's media collection, never stored as
+absolute local paths. Audio can be imported with **Choose audio…** or referred
+to as `[sound:file.mp3]` if it already exists in Anki's media directory.
 
-1. Kartenwerkstatt öffnen und unter **Karte erstellen / bearbeiten** den Typ wählen.
-2. Das Zieldeck und den Fragetext auswählen bzw. eingeben.
-3. Für Auswahlkarten: pro Zeile Antworttext eintragen, **Richtig** anhaken und bei Bildauswahl die Bilddatei wählen. Bei Mehrfachauswahl dürfen mehrere Häkchen gesetzt werden.
-4. Für Satzbau: gewünschten Zielsatz eintragen. Optional eigene Wortbausteine (durch Leerzeichen getrennt) und Alternativlösungen, je eine pro Zeile, eintragen.
-5. **Karte erstellen** klicken.
+## Mobile, AnkiWeb, and safety boundaries
 
-Bilder werden in die **Anki-Mediensammlung** kopiert, nicht als absolute lokale Dateipfade in der Karte gespeichert. Audio kann mit **Audio wählen …** importiert oder als `[sound:datei.mp3]` angegeben werden, wenn die Datei bereits in Ankis Mediaverzeichnis existiert.
+The add-on itself runs only on Anki Desktop. Cards created with it can sync to
+other clients because their templates live in the note types. Complex cards are
+best created and edited on Desktop. JavaScript card behaviour is not guaranteed
+by every current or future Anki client, so test the card types, distractors, and
+answer display on the learner's target devices before a broad rollout.
 
-**Bearbeiten:** Browser öffnen → exakt eine interaktive AIC-Notiz markieren → Menü **Notizen → Interactive Cards · ausgewählte Notiz bearbeiten**. Die Änderung an den Notizfeldern verändert keine Schedulingwerte.
+AIC has no cloud service, telemetry, or runtime third-party dependency. It does
+not alter FSRS, scheduling, lapses, or card ratings. An answer judged correct by
+the template does not automatically select **Good**. Import only decks from
+sources you trust: Anki card templates can contain JavaScript, which is a
+general Anki trust boundary rather than a special AIC permission.
 
-## Aus bestehenden Notizen generieren
+## Foundation package for deck-generation agents
 
-Kartenwerkstatt → **Aus bestehenden Vokabeln erzeugen**:
+`templates/aic-foundation/AIC Foundation.apkg` is a version-pinned base for an
+agent that builds a complete `.apkg` without using Anki's editor. It contains
+the three AIC note types with their embedded templates, CSS, and JavaScript.
+It also deliberately contains three notes tagged `aic-foundation::seed`, so
+Anki exports the note types. A deck builder must import it into a temporary
+collection, create its requested notes, remove all seed notes and the empty
+`AIC Foundation` deck, then export the learner-facing deck without review
+history. See the shared Anki deck-creation agent guide for the field contract.
 
-1. **Quell-Notiztyp** und **Quell-Deck** wählen.
-2. Das Feld für **Frage** und das Feld für **Antwort** zuordnen.
-3. Für Bildauswahl zusätzlich das **Bildfeld** angeben; dieses Bild sollte zur Antwort der jeweiligen Vokabel gehören. Optional ein Audiofeld wählen.
-4. Zieldeck, gewünschte Kartensorte und Anzahl falscher Antwortmöglichkeiten einstellen.
-5. **Quelle prüfen**, dann **Karten erzeugen**.
-
-Die Quellnotizen werden dabei **nicht verändert**. Für Auswahlkarten werden abweichende Antworten anderer Quellnotizen als Distraktoren vorgeschlagen; eine einfache Längen-/Wortanzahl-Heuristik sortiert diese. Diese Methode überprüft **keine semantische Gleichwertigkeit**. Distraktoren bitte kontrollieren; bei Synonymen oder mehrdeutigen Fragen manuell korrigieren.
-
-Ausgangsnotizen müssen mindestens zwei geeignete, verschiedene Antworten enthalten; für Bildauswahl mindestens zwei gültige Bildzuordnungen. Die Stapelerstellung ist auf **maximal 5.000 Quellnotizen pro Durchlauf** begrenzt.
-
-Bei erneutem Durchlauf werden bereits erzeugte Karten per Herkunfts-ID erkannt und standardmäßig übersprungen. Mit **Bereits erzeugte Karten aktualisieren** werden deren Inhalte aktualisiert, ohne die Karten zu entfernen oder ihren Lernstatus zurückzusetzen. Bereits manuell geänderte Antworten solcher Karten werden dadurch wieder überschrieben. **Die Aktualisierung läuft nicht permanent im Hintergrund**; sie muss manuell gestartet werden.
-
-## Theme-Schnittstelle (Design separat)
-
-Dieses Add-on nutzt ein **neutrales Design**. Es enthält keine Duolingo-/WoW-Optik, Soundeffekte, XP, Erfolge oder Gamification. Mit `.aic-root` und den untergeordneten `.aic-*`-Klassen sowie `--aic-color-text`, `--aic-color-surface`, `--aic-color-border`, `--aic-color-accent`, `--aic-color-accent-bg`, `--aic-color-success`, `--aic-color-danger`, `--aic-radius`, `--aic-spacing` und `--aic-font-family` stehen Theme-Anknüpfungspunkte zur Verfügung.
-
-Fremde Add-ons können diese CSS-Variablen für den Desktop überschreiben, ohne Kartendaten oder Auswertung zu ändern. Für **AnkiDroid/AnkiMobile** muss ein Theme seine Stildefinitionen in den synchronisierten Notiztypen bzw. Medien bereitstellen, da Desktop-Python-Hooks auf mobilen Geräten nicht verfügbar sind.
-
-## Mobil und AnkiWeb
-
-Das Add-on selbst läuft **nur auf Anki Desktop**. Einmal erstellte Karten können über Anki-Synchronisierung auf andere Clients übertragen werden, weil die HTML-/CSS-/JavaScript-Kartenvorlagen in den Notiztypen gespeichert sind. **Auf Smartphones erstellst bzw. bearbeitest du die komplexen Karten am besten am Desktop.**
-
-JavaScript in Karten ist von Anki **nicht für alle Clients und zukünftigen Versionen garantiert**. Das Paket wurde hier mit Chromium (Browser-Tests) getestet, **nicht in einer echten Anki-Desktop-, AnkiDroid- oder AnkiMobile-Installation**. Vor produktivem Einsatz alle Kartentypen, die falschen Wortkacheln und die Antwortseite auf deinen Geräten prüfen. Für AnkiWeb ebenfalls keine Garantie.
-
-## Daten, Speicher und Grenzen
-
-- Keine Cloud, Telemetrie oder externe Pakete zur Laufzeit.
-- Keine Änderungen an FSRS, Wiederholungsplanung, Lapses, Kartenbewertungen oder Deck-Algorithmen.
-- Anki-Bewertung **Again / Hard / Good / Easy erfolgt weiterhin durch den Nutzer**; eine im Kartentemplate als richtig erkannte Antwort führt nicht zu `Good`.
-- Bei Multiple Choice wird ein Versuch nur dann als vollständig richtig gewertet, wenn **exakt die richtigen Optionen** markiert wurden.
-- Im Satzbaustein-Modus werden Wörter anhand von Leerzeichen getrennt; komplexe Tokenisierung (z. B. Interpunktion als eigene Kachel) wird nicht automatisch geleistet. Eigene Wortbausteine sind möglich.
-- Die Übertragung von Antwortversuchen auf die Rückseite ist eine optionale Komfortanzeige über Sitzungszustand; bei Clients mit getrennten WebViews kann die letzte Antwort fehlen, **die korrekte Lösung bleibt sichtbar**.
-- Die Bildreferenzen werden explizit in einem Medienfeld vorgehalten, damit Anki die Dateien auch beim Export erkennen kann.
-- Anki selbst erlaubt das direkte Editieren der JSON-Felder; für `Options`, `Correct`, `Tokens`, `Alternatives`, `Distractors` möglichst den AIC-Editor verwenden.
-
-## Entwicklung / Tests
-
-Ordnerstruktur:
-
-```
-anki_interactive_cards/
-├── __init__.py                  # Anki-Menü und Browser-Eintrag
-├── src/
-│   ├── core.py                  # Validierung, Distraktoren, Textregeln
-│   ├── anki_bridge.py           # Notiztypen, Medien, Batch-Generierung
-│   ├── dialogs.py               # Kartenwerkstatt und Stapelgenerierung
-│   ├── native_editor.py         # Native Editor-Schaltfläche / Anki-Speicherhooks
-│   ├── editor_data.py           # Pure Validierung und Feldaufbereitung
-│   ├── templates.py             # HTML/JS/CSS-Kartenvorlagen
-│   └── web/card.js, card.css
-├── tests/
-└── examples/
-```
-
-**Unit-Tests:** `just test` (derzeit 19 Tests)
-**Browser-Tests:** `just test-browser` (benötigt Python Playwright + lokales Chromium)
-**Syntaxprüfung:** `python -m compileall -q .` und `node --check src/web/card.js`.
-
-Für die Tests braucht man kein installiertes Anki, solange man nur die Kernlogik testet. Die tatsächliche Qt- und Anki-Integration erfordert einen separaten Test in einer Anki-Installation.
-
-## Build a distributable add-on
-
-Run the following command from the repository root:
-
-```bash
-just build
-```
-
-It creates `dist/anki-interactive-cards-1.2.0.ankiaddon`. The archive contains
-only runtime files, with `__init__.py` and `manifest.json` at its root, and
-excludes tests, Git metadata, caches, and local template backups. Before
-sharing it, install it in a backed-up test profile through **Tools → Add-ons →
-Install from file…**, restart Anki, and create or review one card of each AIC
-note type. The `user_files/` marker is intentionally included so Anki retains
-template backups during future add-on upgrades.
-
-## Foundation package for automated deck builders
-
-An agent that creates a complete `.apkg` without opening Anki's editor can use
-`templates/aic-foundation/AIC Foundation.apkg` as a version-pinned base. It
-contains the three complete AIC note types, including their embedded card
-templates, CSS, and JavaScript.
-
-The package intentionally includes three obvious seed notes tagged
-`aic-foundation::seed`, because Anki only exports note types referenced by
-notes. An automated builder imports the foundation into a temporary collection,
-creates the requested notes, deletes every seed note and the now-empty `AIC
-Foundation` deck, then exports the learner-facing deck without scheduling
-history. The full field-serialization contract is in the shared **Anki deck
-creation agent guide**.
-
-Rebuild and verify the foundation after a template change:
+After changing templates, run:
 
 ```bash
 just build-foundation
 just verify-foundation
 ```
 
-## Entwicklerhinweise
+## Development and release
 
-- `src/templates.py` speichert CSS und JS **inline im Notiztyp**; dadurch sind Karten selbsttragend und brauchen keine `/_addons`-Dateien auf mobilen Geräten.
-- `Source ID` identifiziert automatisch erzeugte Karten, `UID` identifiziert den temporären Versuch im WebView.
-- Die von Nutzern angepassten Kartenvorlagen werden bei normalem Start **nicht überschrieben**.
-- Weitere Möglichkeiten: UI-Sprachen, semantische Distraktorprüfung, Quellenfeld-Live-Sync, separate Theme-Add-ons.
+```bash
+just test          # 19 Python unit tests
+python3 -m pip install playwright==1.64.1
+just test-browser  # requires that package and /usr/bin/chromium
+just check         # unit tests, syntax checks, and archive validation
+just build
+```
 
-Siehe `CHANGELOG.md` und `LICENSE`. Dieses Projekt ist unter der GNU Affero
-General Public License, Version 3 oder neuer (AGPL-3.0-or-later), lizenziert.
+Playwright is a development-only test dependency. It is not required by the
+installed add-on and is not included in the release archive.
+
+The release archive has `__init__.py` and `manifest.json` at its root and
+includes only runtime files, the full `LICENSE`, and the `user_files` marker.
+It excludes Git metadata, tests, caches, and user-created backups. Before
+sharing a release, install it into a backed-up test profile, restart Anki, and
+author and review one card of each type.
+
+Further implementation and release details are in [docs/README.md](docs/README.md).
+
+## License
+
+Licensed under the GNU Affero General Public License, version 3 or later
+(AGPL-3.0-or-later). The complete license text is in [LICENSE](LICENSE).

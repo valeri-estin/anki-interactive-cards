@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Changed the project license to AGPL-3.0-or-later and include `LICENSE` in
+  every distributable add-on archive.
 - Added a reproducible minimal `.ankiaddon` builder, release guide, and a
   preserved `user_files` marker for template backups.
 - Added an importable AIC Foundation `.apkg` for automated deck builders,

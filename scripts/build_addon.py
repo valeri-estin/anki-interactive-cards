@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_PATHS = ("__init__.py", "manifest.json", "src", "user_files")
+RUNTIME_PATHS = ("__init__.py", "LICENSE", "manifest.json", "src", "user_files")
 
 
 def runtime_files() -> list[Path]:
@@ -40,7 +40,7 @@ def main() -> None:
 
     with ZipFile(output) as archive:
         names = set(archive.namelist())
-    required = {"__init__.py", "manifest.json"}
+    required = {"__init__.py", "LICENSE", "manifest.json"}
     if not required.issubset(names):
         raise RuntimeError(f"Invalid add-on archive; missing {sorted(required - names)}")
     print(output)

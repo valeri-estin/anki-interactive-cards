@@ -3,7 +3,7 @@
 **Version:** 1.2.0
 **Plattform:** Anki Desktop (Python-Add-on, Qt6) zum Erstellen; HTML/JavaScript-Karten zum Lernen  
 **Sprache der Oberfläche:** Deutsch  
-**Lizenz:** 0BSD
+**Lizenz:** AGPL-3.0-or-later
 
 Ein Add-on für interaktive Anki-Karten. Die Lernkarten verwenden **Ankis normalen Scheduler einschließlich FSRS**. Es werden keine Bewertungen automatisiert, kein Lernfortschritt umgeschrieben und keine Netzwerkdienste aufgerufen.
 
@@ -221,4 +221,5 @@ just verify-foundation
 - Die von Nutzern angepassten Kartenvorlagen werden bei normalem Start **nicht überschrieben**.
 - Weitere Möglichkeiten: UI-Sprachen, semantische Distraktorprüfung, Quellenfeld-Live-Sync, separate Theme-Add-ons.
 
-Siehe `CHANGELOG.md` und `LICENSE`.
+Siehe `CHANGELOG.md` und `LICENSE`. Dieses Projekt ist unter der GNU Affero
+General Public License, Version 3 oder neuer (AGPL-3.0-or-later), lizenziert.

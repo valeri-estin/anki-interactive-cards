@@ -4,6 +4,8 @@
 
 - Added a reproducible minimal `.ankiaddon` builder, release guide, and a
   preserved `user_files` marker for template backups.
+- Added an importable AIC Foundation `.apkg` for automated deck builders,
+  including isolated package verification and seed-removal guidance.
 
 ## 1.2.0 – 2026-10-28
 

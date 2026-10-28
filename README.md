@@ -192,6 +192,28 @@ Install from file…**, restart Anki, and create or review one card of each AIC
 note type. The `user_files/` marker is intentionally included so Anki retains
 template backups during future add-on upgrades.
 
+## Foundation package for automated deck builders
+
+An agent that creates a complete `.apkg` without opening Anki's editor can use
+`templates/aic-foundation/AIC Foundation.apkg` as a version-pinned base. It
+contains the three complete AIC note types, including their embedded card
+templates, CSS, and JavaScript.
+
+The package intentionally includes three obvious seed notes tagged
+`aic-foundation::seed`, because Anki only exports note types referenced by
+notes. An automated builder imports the foundation into a temporary collection,
+creates the requested notes, deletes every seed note and the now-empty `AIC
+Foundation` deck, then exports the learner-facing deck without scheduling
+history. The full field-serialization contract is in the shared **Anki deck
+creation agent guide**.
+
+Rebuild and verify the foundation after a template change:
+
+```bash
+just build-foundation
+just verify-foundation
+```
+
 ## Entwicklerhinweise
 
 - `src/templates.py` speichert CSS und JS **inline im Notiztyp**; dadurch sind Karten selbsttragend und brauchen keine `/_addons`-Dateien auf mobilen Geräten.

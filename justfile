@@ -22,5 +22,13 @@ test-browser:
 build:
     python3 -B scripts/build_addon.py
 
+# Build the importable base package for direct deck generators.
+build-foundation:
+    PYTHONPATH="/usr/local/share/anki/app_packages:{{justfile_directory()}}" /usr/local/share/anki/python/bin/python3.13 scripts/build_aic_foundation_package.py --output 'templates/aic-foundation/AIC Foundation.apkg'
+
+# Verify that the foundation package imports with all AIC note types intact.
+verify-foundation:
+    PYTHONPATH="/usr/local/share/anki/app_packages:{{justfile_directory()}}" /usr/local/share/anki/python/bin/python3.13 scripts/verify_aic_foundation_package.py 'templates/aic-foundation/AIC Foundation.apkg'
+
 # Run the available automated checks and package verification.
 check: test build

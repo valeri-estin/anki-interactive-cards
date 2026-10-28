@@ -62,6 +62,11 @@ add-ons that modify the same interface.
 
 ## Installation
 
+Für die Nutzung sind neben einer kompatiblen Anki-Desktop-Installation keine
+zusätzlichen Python-, Node- oder Systempakete erforderlich. Das Add-on verwendet
+nur Ankis mitgelieferte Python-/Qt-Laufzeit und die Browserlogik in den
+Kartenvorlagen.
+
 1. Anki Desktop schließen bzw. vor der Installation ein Backup deiner Sammlung erstellen.
 2. Die Datei `anki-interactive-cards-1.2.0.ankiaddon` herunterladen.
 3. Anki → **Extras → Erweiterungen → Aus Datei installieren** (Bezeichnung kann je nach Sprache/Version variieren).

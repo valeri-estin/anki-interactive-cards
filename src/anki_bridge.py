@@ -10,7 +10,7 @@ from .templates import NOTE_TYPES, CSS, make_template
 
 ADVANCED_FIELDS = {'Options', 'Correct', 'Media References', 'Answer', 'Tokens', 'Alternatives', 'Mode', 'Distractors', 'UID', 'Source ID'}
 
-def ensure_types(col, update=False):
+def ensure_types(col, update=False, language="en"):
     """Create missing notetypes. Existing custom templates only replaced explicitly."""
     installed = []
     for kind, spec in NOTE_TYPES.items():
@@ -46,12 +46,12 @@ def ensure_types(col, update=False):
                     fld['collapsed'] = True  # Native Anki 'Collapse by default' option
                 col.models.add_field(model, fld)
             template = col.models.new_template('Interaktive Karte')
-            template.update(make_template(kind))
+            template.update(make_template(kind, language))
             col.models.add_template(model,template)
             model['css'] = CSS
             col.models.add(model)
         else:
-            template = make_template(kind)
+            template = make_template(kind, language)
             model['tmpls'][0]['qfmt'] = template['qfmt']
             model['tmpls'][0]['afmt'] = template['afmt']
             model['css'] = CSS

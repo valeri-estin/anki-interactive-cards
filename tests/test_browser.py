@@ -25,18 +25,18 @@ async def run_tests():
         await page.set_content(card_html('choice',shared))
         assert await page.locator('.aic-option').count()==4
         await page.get_by_role('button',name='la casa').click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
         await page.set_content(card_html('choice',shared,'back'))
         assert 'la casa' in await page.locator('.aic-solution').inner_text()
-        assert 'Deine Antwort' in await page.locator('.aic-feedback').inner_text()
+        assert 'Your answer' in await page.locator('.aic-feedback').inner_text()
 
         multi={**shared,'UID':'demo-multi','Prompt':'Welche sind Nomen?',
                'Correct':as_json_field([0,1])}
         await page.set_content(card_html('multi',multi))
         await page.get_by_role('button',name='la casa').click()
         await page.get_by_role('button',name='il libro').click()
-        await page.get_by_role('button',name='Auswahl prüfen').click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        await page.get_by_role('button',name='Check selection').click()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
 
         sentence={'UID':'demo-sentence','Prompt':'Ich bin zu Hause','Answer':'sono a casa',
                   'Tokens':as_json_field(['sono','a','casa']), 'Alternatives':as_json_field(['io sono a casa']),
@@ -44,28 +44,28 @@ async def run_tests():
         await page.set_content(card_html('sentence',sentence))
         for token in ['sono','a','casa']:
             await page.locator('.aic-bank').get_by_role('button',name=token,exact=True).click()
-        await page.get_by_role('button',name='Satz prüfen').click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        await page.get_by_role('button',name='Check sentence').click()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
         await page.set_content(card_html('sentence',sentence))
-        await page.get_by_role('button',name='Schreiben').click()
+        await page.get_by_role('button',name='Typing').click()
         await page.locator('textarea.aic-type').fill('sono a casa!')
-        await page.get_by_role('button',name='Satz prüfen').click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        await page.get_by_role('button',name='Check sentence').click()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
 
         wrong_tiles = {**sentence, 'UID':'demo-wrong-tiles',
                        'Mode':'tiles', 'Distractors':as_json_field(['il', 'andare'])}
         await page.set_content(card_html('sentence',wrong_tiles))
         assert await page.locator('.aic-bank .aic-token').count() == 5
-        assert 'Nicht alle Wörter' in await page.locator('.aic-distractor-hint').inner_text()
+        assert 'Not every word' in await page.locator('.aic-distractor-hint').inner_text()
         for token in ['sono','a','casa']:
             await page.locator('.aic-bank').get_by_role('button',name=token,exact=True).click()
-        await page.get_by_role('button',name='Satz prüfen').click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        await page.get_by_role('button',name='Check sentence').click()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
         await page.set_content(card_html('sentence',wrong_tiles))
         for token in ['sono','il','a','casa']:
             await page.locator('.aic-bank').get_by_role('button',name=token,exact=True).click()
-        await page.get_by_role('button',name='Satz prüfen').click()
-        assert 'Nicht ganz' in await page.locator('.aic-feedback').inner_text()
+        await page.get_by_role('button',name='Check sentence').click()
+        assert 'Not quite' in await page.locator('.aic-feedback').inner_text()
         await page.set_content(card_html('sentence',{**wrong_tiles, 'UID':'demo-old', 'Distractors':''}))
         assert await page.locator('.aic-bank .aic-token').count() == 3
 
@@ -94,7 +94,7 @@ async def run_tests():
         assert await page.locator('.aic-label').count()==0
         # In image mode no text answer is shown, but image src identifies it in this test.
         await page.locator('.aic-option').filter(has=page.locator('img[src="home.png"]')).click()
-        assert 'Richtig' in await page.locator('.aic-feedback').inner_text()
+        assert 'Correct' in await page.locator('.aic-feedback').inner_text()
         assert not errors, errors
         print('Browser tests: 8/8 scenarios passed (choice, back, multi, tiles, typing, image, wrong tiles, editor visibility).')
         await browser.close()

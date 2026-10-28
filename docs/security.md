@@ -54,3 +54,11 @@ exporting the learner-facing package.
 No finding in scope. Verification is limited to isolated collection imports;
 manual review in a backed-up Anki Desktop profile remains appropriate after a
 future Anki or template upgrade.
+
+## Interface localization (2026-10-28)
+
+Focused review: `ui_language` is restricted to `en` and `de`, with English as
+the fallback. Card-template copy is JSON-serialized and rendered through the
+existing `textContent` path; it never changes note data, collection queries,
+media paths, scheduling, or remote access. Updating templates remains an
+explicit, backed-up user action.

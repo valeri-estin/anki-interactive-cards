@@ -4,6 +4,11 @@ This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Unreleased
 
+### Added
+
+- Centralized portable card-template and menu copy, made English the default,
+  and added the optional German `ui_language` translation.
+
 ### Changed
 
 - Replaced the short licensing notice with the complete AGPL-3.0 license text

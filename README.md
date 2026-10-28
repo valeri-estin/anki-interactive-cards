@@ -1,8 +1,8 @@
 # Anki Interactive Cards
 
-**Version:** 1.2.0
+**Version:** 1.2.1
 **Platform:** Anki Desktop (Python/Qt 6 add-on for authoring; HTML and JavaScript cards for review)
-**Interface language:** German
+**Interface language:** English by default; German available through add-on configuration
 **License:** AGPL-3.0-or-later
 
 Anki Interactive Cards (AIC) adds interactive note types to Anki. It uses
@@ -17,7 +17,7 @@ Desktop installation. AIC uses only Anki's bundled Python/Qt runtime and the
 HTML/JavaScript embedded in its card templates.
 
 1. Back up the collection and close Anki.
-2. Download `anki-interactive-cards-1.2.0.ankiaddon`.
+2. Download `anki-interactive-cards-1.2.1.ankiaddon`.
 3. In Anki Desktop, choose **Tools → Add-ons → Install from file…** (the label
    varies with Anki's interface language), select the archive, and restart
    Anki.
@@ -32,6 +32,13 @@ the AIC fields; Anki creates or saves the note. When editing one existing AIC
 note in Anki's browser, applying the dialog writes the updated AIC fields to
 that note. If the toolbar button is missing, confirm that the add-on is enabled
 and restart Anki.
+
+To use German card copy, open the add-on configuration in Anki, set
+`ui_language` to `"de"`, restart Anki, and choose **Tools → Interactive Cards
+· Update templates**. The explicit update replaces AIC card templates so the
+synced cards use the selected language. Set `ui_language` to `"en"` and repeat
+the update to return to English. Note type names and stored field names never
+change.
 
 For an update from 1.1.0, create a backup first. Existing note data is
 preserved; `Distractors` is added as needed. To apply the new sentence-builder

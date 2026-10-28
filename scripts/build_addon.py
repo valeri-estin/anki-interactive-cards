@@ -8,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNTIME_PATHS = ("__init__.py", "LICENSE", "manifest.json", "src", "user_files")
+RUNTIME_PATHS = ("__init__.py", "LICENSE", "manifest.json", "config.json", "src", "user_files")
 
 
 def runtime_files() -> list[Path]:

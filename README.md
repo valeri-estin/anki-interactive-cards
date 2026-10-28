@@ -1,6 +1,6 @@
 # Anki Interactive Cards
 
-**Version:** 1.2.0 (Release Candidate – nicht in Anki Desktop verifiziert)  
+**Version:** 1.2.0
 **Plattform:** Anki Desktop (Python-Add-on, Qt6) zum Erstellen; HTML/JavaScript-Karten zum Lernen  
 **Sprache der Oberfläche:** Deutsch  
 **Lizenz:** 0BSD
@@ -55,9 +55,10 @@ funktionieren weiterhin wie bisher.
 5. Hinzufügen-Fenster schließen und neu öffnen, damit die Editoransicht mit
    den ausgeblendeten Feldern geladen wird.
 
-**Wichtig:** Das Add-on wurde automatisiert getestet, aber nicht innerhalb
-von Anki Desktop ausgeführt. Die Darstellung des neuen Editorfilters muss
-an deiner Anki-Version praktisch geprüft werden.
+**Verification status:** Automated checks cover the supported data and browser
+paths. The add-on has also been exercised in Anki Desktop; run the update once
+in a backed-up test profile after upgrading Anki or combining it with editor
+add-ons that modify the same interface.
 
 ## Installation
 
@@ -164,11 +165,27 @@ anki_interactive_cards/
 └── examples/
 ```
 
-**Unit-Tests:** `python -m unittest discover -s tests -p 'test_*.py'` (derzeit 19 Tests)  
-**Browser-Tests:** `python tests/test_browser.py` (benötigt Python Playwright + lokales Chromium)  
+**Unit-Tests:** `just test` (derzeit 19 Tests)
+**Browser-Tests:** `just test-browser` (benötigt Python Playwright + lokales Chromium)
 **Syntaxprüfung:** `python -m compileall -q .` und `node --check src/web/card.js`.
 
 Für die Tests braucht man kein installiertes Anki, solange man nur die Kernlogik testet. Die tatsächliche Qt- und Anki-Integration erfordert einen separaten Test in einer Anki-Installation.
+
+## Build a distributable add-on
+
+Run the following command from the repository root:
+
+```bash
+just build
+```
+
+It creates `dist/anki-interactive-cards-1.2.0.ankiaddon`. The archive contains
+only runtime files, with `__init__.py` and `manifest.json` at its root, and
+excludes tests, Git metadata, caches, and local template backups. Before
+sharing it, install it in a backed-up test profile through **Tools → Add-ons →
+Install from file…**, restart Anki, and create or review one card of each AIC
+note type. The `user_files/` marker is intentionally included so Anki retains
+template backups during future add-on upgrades.
 
 ## Entwicklerhinweise
 

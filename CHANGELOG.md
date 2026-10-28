@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Added a reproducible minimal `.ankiaddon` builder, release guide, and a
+  preserved `user_files` marker for template backups.
+
 ## 1.2.0 – 2026-10-28
 
 - Technische Notizfelder im normalen Anki-Editor standardmäßig ausgeblendet;
@@ -15,8 +20,6 @@
   Migration beim Profilstart; Vorlagenupdate weiterhin explizit mit Backup.
 - Neue Validierungs-, Migrations-, Browser- und Editoransicht-Tests.
 - FSRS, Anki-Scheduler und standardmäßige Bewertungsbuttons unverändert.
-
-# Changelog
 
 ## 1.1.0 — 2026-10-28
 

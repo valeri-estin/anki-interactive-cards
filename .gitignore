@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+dist/
+
+# Keep a marker so Anki preserves user-created template backups on upgrades.
+user_files/*
+!user_files/README.txt

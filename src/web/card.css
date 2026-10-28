@@ -1,0 +1,83 @@
+/* Anki Interactive Cards 1.2 — intentionally neutral, no franchise-specific styling.
+   Third-party themes can override --aic-* variables and .aic-* selectors.
+   No global Anki selectors are modified. */
+.aic-root {
+  --aic-color-text: #252a32;
+  --aic-color-muted: #69707a;
+  --aic-color-surface: #f6f7f8;
+  --aic-color-border: #d6d9dd;
+  --aic-color-accent: #566b80;
+  --aic-color-accent-bg: #eaf0f5;
+  --aic-color-success: #256f43;
+  --aic-color-success-bg: #edf7f0;
+  --aic-color-danger: #ae3535;
+  --aic-color-danger-bg: #fff0f0;
+  --aic-color-focus: #436d9c;
+  --aic-font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --aic-radius: 8px;
+  --aic-spacing: 12px;
+  box-sizing: border-box;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 18px 10px 26px;
+  color: var(--aic-color-text);
+  font-family: var(--aic-font-family);
+  text-align: left;
+}
+.nightMode .aic-root, .night_mode .aic-root, .aic-root.nightMode {
+  --aic-color-text: #e6e8eb;
+  --aic-color-muted: #a4abb5;
+  --aic-color-surface: #2b2f35;
+  --aic-color-border: #515760;
+  --aic-color-accent: #aabed0;
+  --aic-color-accent-bg: #303c48;
+  --aic-color-success: #92d1a4;
+  --aic-color-success-bg: #243a2c;
+  --aic-color-danger: #f2a0a0;
+  --aic-color-danger-bg: #452f33;
+  --aic-color-focus: #99bde5;
+}
+.aic-root * { box-sizing: border-box; }
+.aic-tag { font-size: 12px; letter-spacing: .03em; color: var(--aic-color-muted); font-weight: 500; margin-bottom: 10px; }
+.aic-question { font-weight: 600; font-size: clamp(21px, 3.6vw, 29px); line-height: 1.35; margin: 0 0 12px; overflow-wrap: anywhere; }
+.aic-hero { margin-bottom: 14px; text-align: center; }
+.aic-hero:empty,.aic-audio:empty { display:none; }
+.aic-hero img { max-width: 100%; max-height: 225px; object-fit: contain; border-radius: var(--aic-radius); }
+.aic-audio { margin-bottom: 12px; }
+.aic-canvas.aic-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--aic-spacing); margin:18px 0 12px; }
+.aic-images .aic-canvas.aic-grid { grid-template-columns:repeat(2, minmax(0,1fr)); }
+.aic-multi .aic-canvas.aic-grid { grid-template-columns:1fr; }
+.aic-option,.aic-token,.aic-action,.aic-switch { -webkit-appearance:none; appearance:none; touch-action:manipulation; font:inherit; cursor:pointer; }
+.aic-option { display:flex; align-items:center; justify-content:flex-start; gap:10px; width:100%; min-height:54px; padding:12px 14px; border:1px solid var(--aic-color-border); border-radius:var(--aic-radius); color:var(--aic-color-text); background:var(--aic-color-surface); text-align:left; font-size:16px; font-weight:500; overflow-wrap:anywhere; }
+.aic-option:hover:not(:disabled), .aic-token:hover:not(:disabled) { border-color:var(--aic-color-accent); }
+.aic-option:focus-visible,.aic-token:focus-visible,.aic-action:focus-visible,.aic-switch:focus-visible,.aic-type:focus-visible { outline:2px solid var(--aic-color-focus); outline-offset:2px; }
+.aic-option.aic-selected { border-color:var(--aic-color-accent); background:var(--aic-color-accent-bg); }
+.aic-option.aic-correct { border-color:var(--aic-color-success); background:var(--aic-color-success-bg); }
+.aic-option.aic-wrong { border-color:var(--aic-color-danger); background:var(--aic-color-danger-bg); }
+.aic-option:disabled { cursor:default; opacity:1; }
+.aic-option .aic-thumb { display:block; width:100%; height:132px; object-fit:contain; border-radius:4px; }
+.aic-images .aic-option { flex-direction:column; align-items:center; text-align:center; min-height:172px; padding:8px; }
+.aic-check { display:inline-flex; align-items:center; justify-content:center; width:21px; height:21px; flex:0 0 21px; border:1px solid var(--aic-color-muted); border-radius:3px; font-size:14px; }
+.aic-selected .aic-check { border-color:var(--aic-color-accent); background:var(--aic-color-accent-bg); }
+.aic-feedback { margin:12px 0; padding:10px 12px; border:1px solid var(--aic-color-border); border-radius:var(--aic-radius); font-size:15px; line-height:1.45; background:var(--aic-color-surface); }
+.aic-feedback.good { border-color:var(--aic-color-success); color:var(--aic-color-success); background:var(--aic-color-success-bg); }
+.aic-feedback.bad { border-color:var(--aic-color-danger); color:var(--aic-color-danger); background:var(--aic-color-danger-bg); }
+.aic-feedback:empty { display:none; }
+.aic-action { display:inline-block; min-height:42px; margin:6px 8px 6px 0; padding:9px 16px; border:1px solid var(--aic-color-accent); border-radius:var(--aic-radius); color:var(--aic-color-text); background:var(--aic-color-accent-bg); font-size:15px; font-weight:600; }
+.aic-action.secondary { border-color:var(--aic-color-border); background:var(--aic-color-surface); font-weight:400; }
+.aic-action:disabled { opacity:.5; cursor:default; }
+.aic-tile-area { display:flex; flex-wrap:wrap; align-items:center; gap:8px; min-height:66px; border-bottom:1px solid var(--aic-color-border); padding:10px 4px; margin:14px 0; }
+.aic-bank { display:flex; flex-wrap:wrap; gap:8px; min-height:54px; margin:12px 0; }
+.aic-token { border:1px solid var(--aic-color-border); background:var(--aic-color-surface); padding:9px 13px; color:var(--aic-color-text); border-radius:var(--aic-radius); font-size:17px; min-height:44px; }
+.aic-token.aic-used { visibility:hidden; pointer-events:none; }
+.aic-token.placed { border-color:var(--aic-color-accent); background:var(--aic-color-accent-bg); }
+.aic-type { width:100%; min-height:56px; border:1px solid var(--aic-color-border); border-radius:var(--aic-radius); background:var(--aic-color-surface); color:var(--aic-color-text); padding:10px; font:inherit; font-size:17px; }
+.aic-switch { margin:6px 6px 12px 0; border:1px solid var(--aic-color-border); border-radius:var(--aic-radius); background:var(--aic-color-surface); color:var(--aic-color-text); padding:7px 12px; font-size:14px; }
+.aic-switch.active { background:var(--aic-color-accent-bg); border-color:var(--aic-color-accent); font-weight:600; }
+.aic-solution { padding:14px; border:1px solid var(--aic-color-border); border-radius:var(--aic-radius); background:var(--aic-color-surface); font-size:21px; font-weight:600; line-height:1.35; overflow-wrap:anywhere; }
+.aic-explanation { color:var(--aic-color-muted); font-size:15px; line-height:1.55; margin-top:14px; }
+.aic-explanation:empty { display:none; }
+.aic-caption { color:var(--aic-color-muted); font-size:13px; margin-top:12px; line-height:1.45; }
+@media(max-width:420px){.aic-canvas.aic-grid{gap:8px}.aic-option{padding:9px;font-size:15px}.aic-option .aic-thumb{height:112px}.aic-images .aic-option{min-height:150px}.aic-root{padding:12px 2px 24px}}
+
+.aic-distractor-hint { color:var(--aic-color-muted); font-size:13px; margin:6px 0 4px; }

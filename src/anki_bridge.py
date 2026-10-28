@@ -6,7 +6,7 @@ import uuid
 from pathlib import Path
 from .core import as_json_field, from_json_field, validate_choices, validate_sentence, tokenize_sentence, detect_media, choose_distractors, clean_text
 from .templates import NOTE_TYPES, CSS, make_template
-from .localization import legacy_text as l
+from .localization import legacy_format as lf, legacy_text as l
 
 
 ADVANCED_FIELDS = {'Options', 'Correct', 'Media References', 'Answer', 'Tokens', 'Alternatives', 'Mode', 'Distractors', 'UID', 'Source ID'}
@@ -23,7 +23,7 @@ def ensure_types(col, update=False, language="en"):
             # touching cards or customized templates. Older missing fields
             # indicate a broken/modified notetype and require manual review.
             if missing - ({'Distractors'} if kind == 'sentence' else set()):
-                raise ValueError(f"Notiztyp {spec['name']} hat fehlende Felder: {', '.join(sorted(missing))}. Bitte manuell prüfen.")
+                raise ValueError(lf('Notiztyp {name} hat fehlende Felder: {fields}. Bitte manuell prüfen.', name=spec['name'], fields=', '.join(sorted(missing))))
             if kind == 'sentence' and 'Distractors' in missing:
                 fld = col.models.new_field('Distractors')
                 fld['collapsed'] = True

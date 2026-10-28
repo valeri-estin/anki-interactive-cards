@@ -16,7 +16,7 @@ from .anki_bridge import (
 )
 from .core import from_json_field, tokenize_sentence, choose_distractors, clean_text
 from .templates import NOTE_TYPES
-from .localization import legacy_text as l
+from .localization import legacy_format as lf, legacy_text as l
 
 
 def field_names(col, note_type):
@@ -67,11 +67,11 @@ class InteractiveDialog(QDialog):
                              ('Mehrfachauswahl · Checkboxen','multi'),('Satzbau','sentence')]:
             self.kind.addItem(l(label),value)
         self.deck = self._deck_selector()
-        self.prompt = QLineEdit(); self.prompt.setPlaceholderText('e.g. das Haus / Which words are nouns?')
+        self.prompt = QLineEdit(); self.prompt.setPlaceholderText(l('z. B. das Haus / Welche Wörter sind Nomen?'))
         self.answer = QLineEdit(); self.answer.setPlaceholderText('z. B. sono a casa')
         self.mode = QComboBox()
         for label,value in [('Wortkacheln und Texteingabe','both'),('Nur Wortkacheln','tiles'),('Nur Texteingabe','typing')]: self.mode.addItem(l(label),value)
-        self.tokens = QLineEdit(); self.tokens.setPlaceholderText('Leave empty to split the target sentence automatically')
+        self.tokens = QLineEdit(); self.tokens.setPlaceholderText(l('Leer lassen für automatische Trennung des Zielsatzes'))
         self.alternatives = QTextEdit(); self.alternatives.setMaximumHeight(70)
         self.alternatives.setPlaceholderText('Je eine ebenfalls korrekte Schreibweise pro Zeile')
         self.distractors = QTextEdit(); self.distractors.setMaximumHeight(80)
@@ -289,7 +289,7 @@ class InteractiveDialog(QDialog):
     def _preview_source(self):
         try:
             rows=self._rows()
-            lines=[f'{len(rows)} gültige Quellnotizen (höchstens 5000 pro Durchlauf)', '']
+            lines=[lf('{count} gültige Quellnotizen (höchstens 5000 pro Durchlauf)', count=len(rows)), '']
             for row in rows[:20]:
                 lines.append(f"• {row['prompt']}  →  {row['answer']}" + ('  [Bild]' if row['image'] else ''))
             if len(rows)>20:lines.append('…')
@@ -307,20 +307,20 @@ class InteractiveDialog(QDialog):
                 raise ValueError('Zuerst die richtige Antwort in der Tabelle eintragen und anhaken.')
             proposed=choose_distractors(correct,[r['answer'] for r in rows],3)
             for word in proposed:self._add_option(word,'',False)
-            tooltip(f'{len(proposed)} Antwortvorschläge ergänzt. Bitte fachlich prüfen.')
+            tooltip(lf('{count} Antwortvorschläge ergänzt. Bitte fachlich prüfen.', count=len(proposed)))
         except Exception as exc:QMessageBox.warning(self,l('Vorschläge'),str(exc))
 
     def _generate(self):
         try:
             rows=self._rows()
             if not rows:raise ValueError(l('Keine gültigen Quellnotizen vorhanden.'))
-            result = QMessageBox.question(self,'Stapel erstellen',
-                f'{len(rows)} Quellnotizen prüfen und interaktive Karten im Deck "{self.target_deck.currentText()}" erzeugen?\n'
-                'Dies erstellt zusätzliche Karten; bestehende Quellnotizen bleiben bestehen.')
+            result = QMessageBox.question(self,'Batch creation', lf(
+                '{count} Quellnotizen prüfen und interaktive Karten im Deck "{deck}" erzeugen?\nDies erstellt zusätzliche Karten; bestehende Quellnotizen bleiben bestehen.',
+                count=len(rows), deck=self.target_deck.currentText()))
             if result != QMessageBox.StandardButton.Yes:return
             ensure_types(self.col)
             summary=generate_from_rows(self.col,rows,self.batch_type.currentData(),
                 self.target_deck.currentText(),self.num_distractors.value(),self.batch_update.isChecked())
-            QMessageBox.information(self,'Stapel abgeschlossen',
-                f"Erstellt: {summary['created']}\nAktualisiert: {summary['updated']}\nÜbersprungen: {summary['skipped']}")
+            QMessageBox.information(self,'Batch complete', lf(
+                'Erstellt: {created}\nAktualisiert: {updated}\nÜbersprungen: {skipped}', **summary))
         except Exception as exc:QMessageBox.warning(self,'Stapel fehlgeschlagen',str(exc))
